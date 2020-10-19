@@ -1,0 +1,8 @@
+*.o
+golang/pkg/*
+build/*
+Build/*
+python/__pycache__/*
+golang/src/github.com/*
+golang/src/golang.org/*
+golang/src/tlsdemo/cmd/tlsdemo
