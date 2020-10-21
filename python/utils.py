@@ -227,7 +227,7 @@ def validateDNSRecord( certPem ):
             # hex sequence to help debugging.
             if digestOfCertLocal != digestOfCertServer:
                 print("Computed digest: " + digestOfCertLocal.hex())
-                print("Digest from DNS: " + digestOfCertSerer.hex())
+                print("Digest from DNS: " + digestOfCertServer.hex())
                 raise Exception("The digest of the client certificate doesn't match the DNSSEC record")
             else:
                 log( LOG_LEVEL_NOTICE, "Certificate with CN '" + queryName + "' was validated by the DNSSEC" )
