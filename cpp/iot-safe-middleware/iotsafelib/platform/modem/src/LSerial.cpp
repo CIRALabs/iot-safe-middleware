@@ -18,6 +18,7 @@
 #include "LSerial.h"
 #include <cstdio>
 #include <cstring>
+#include <time.h>
 
 #include <termios.h>
 #include <unistd.h>
@@ -111,19 +112,28 @@ bool LSerial::recv(char* data, unsigned long int toRead, unsigned long int* size
 		return false;
 	}
 
-    int j = 0;
-    int MAX_NBR_ITER = 100; // Arbitrarily chosen value
+    // Preparing a timer
+    time_t timer_initial;
+    time_t timer_current;
+    time(&timer_initial);
+    time(&timer_current);
+
 	for(i=0; i<toRead;) {
 		r = read(m_uart, &data[i], (toRead - i));
 		if(r == -1) {
 			return false;
-		}
-		else if(r) {
+		} else if(r) {
 			i += r;
 		} else if(r == 0) {
-            j++;
+            time(&timer_current);
+        } else {
+            // If we received data, we reset the initial time which is equivalent
+            // to resetting the timer
+            time(&timer_initial);
         }
-        if( j >= MAX_NBR_ITER ) {
+
+        if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
+            _log(PY_LOG_LEVEL_ERROR, "Timeout reached on recv function");
             return false;
         }
 	}
