@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstring>
 #include <time.h>
+#include <errno.h>
 
 #include <termios.h>
 #include <unistd.h>
@@ -34,7 +35,8 @@ LSerial::LSerial(void) {
 LSerial::~LSerial(void) {
 }
 
-
+// Reference:
+// https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/
 bool LSerial::start(const char *modem_port) {
 	_log( PY_LOG_LEVEL_DEBUG, "Opening serial port...");
 
@@ -43,20 +45,39 @@ bool LSerial::start(const char *modem_port) {
 	struct termios serial;
 
 	if((m_uart = open(uart, O_RDWR | O_NOCTTY | O_NDELAY)) >= 0) {
-		tcgetattr(m_uart, &serial);
+		if( tcgetattr(m_uart, &serial) ){
+			_log( PY_LOG_LEVEL_ERROR, "Error getting attributes for serial connection" );
+			return false;
+		}
 
-		serial.c_iflag = 0;
-		serial.c_oflag = 0;
-		serial.c_lflag = 0;
-		serial.c_cflag = 0;
+		memset( &serial, 0, sizeof(serial) );
 
+		// Control modes
+		serial.c_cflag |= CS8;      // Number of bits per byte
+		serial.c_cflag |= CREAD;    // Allow reading
+		serial.c_cflag |= CLOCAL;   // CLOCAL disables modem specific signal lines
+
+		// Will block read until timeout of 0.1 seconds is exhausted
 		serial.c_cc[VMIN] = 0;
-		serial.c_cc[VTIME] = 0;
+		serial.c_cc[VTIME] = 1;
 
-		serial.c_cflag = B115200 | CS8 | CREAD;
+		// Setting baud rate
+		cfsetispeed(&serial, B115200);
+		cfsetospeed(&serial, B115200);
 
-		tcsetattr(m_uart, TCSANOW, &serial); // Apply configuration
-		fcntl(m_uart, F_SETFL, 0);
+		// Apply configuration
+		tcflush(m_uart, TCIFLUSH);
+		if(tcsetattr(m_uart, TCSANOW, &serial)) {
+			_log( PY_LOG_LEVEL_ERROR, "Error setting up serial configuration" );
+			return false;
+		}
+
+		// Setting the flags on the uart file
+		int oldFl = fcntl(m_uart, F_GETFL);
+		if( oldFl == -1 ) {
+			return false;
+		}
+		fcntl(m_uart, F_SETFL, oldFl & ~O_NONBLOCK);
 
 		_log( PY_LOG_LEVEL_DEBUG, "Found serial %s %d\r\n", uart, m_uart);
 		return true;
@@ -76,6 +97,7 @@ bool LSerial::send(char* data, unsigned long int toWrite, unsigned long  int* si
 	for(i=0; i<toWrite;) {
 		w = write(m_uart, &data[i], (toWrite - i));
 		if(w == -1) {
+			_log(PY_LOG_LEVEL_ERROR, "Error when writing to serial port: %d", errno);
 			return false;
 		}
 		else if(w) {
@@ -112,11 +134,11 @@ bool LSerial::recv(char* data, unsigned long int toRead, unsigned long int* size
 		return false;
 	}
 
-    // Preparing a timer
-    time_t timer_initial;
-    time_t timer_current;
-    time(&timer_initial);
-    time(&timer_current);
+	// Preparing a timer
+	time_t timer_initial;
+	time_t timer_current;
+	time(&timer_initial);
+	time(&timer_current);
 
 	for(i=0; i<toRead;) {
 		r = read(m_uart, &data[i], (toRead - i));
@@ -125,22 +147,21 @@ bool LSerial::recv(char* data, unsigned long int toRead, unsigned long int* size
 		} else if(r) {
 			i += r;
 		} else if(r == 0) {
-            time(&timer_current);
-        } else {
-            // If we received data, we reset the initial time which is equivalent
-            // to resetting the timer
-            time(&timer_initial);
-        }
+			time(&timer_current);
+		} else {
+			// If we received data, we reset the initial time which is equivalent
+			// to resetting the timer
+			time(&timer_initial);
+		}
 
-        if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
-            _log(PY_LOG_LEVEL_ERROR, "Timeout reached on recv function");
-            return false;
-        }
+		if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
+			_log(PY_LOG_LEVEL_ERROR, "Timeout reached on recv function");
+			return false;
+		}
 	}
 
 	*size = toRead;
 
-	
 	#ifdef SERIAL_DEBUG
 	if(*size) {
 		unsigned long int i;

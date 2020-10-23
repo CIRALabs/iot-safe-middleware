@@ -144,11 +144,16 @@ extern "C"
                 _log( PY_LOG_LEVEL_DEBUG, "Random data: %s\n", buffer);
             }
 
+            if( Response != ERR_OK_PY ) {
+                throw Response;
+            }
+
             // We destroy the ROT instance and return the status of the operation.
             _cleanup(&modem);
         } catch(...) {
             _log( PY_LOG_LEVEL_ERROR, "Error during the execution of: %s", __FUNCTION__ );
             _error(&modem);
+            return ERR_GENERAL_PY;
         }
         return Response;
     }

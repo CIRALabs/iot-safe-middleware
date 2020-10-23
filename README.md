@@ -67,7 +67,7 @@ Linux rp17 5.4.0-48-generic #52-Ubuntu SMP Thu Sep 10 10:58:49 UTC 2020 x86_64 x
 
 You will need an IoT device, a Modem, an antenna and a provisioned SIM card. Note that a personal laptop can also work as an IoT device for the purpose of this project.
 
-- Modem: Cinterion EXS82-W Revision 01.000 from Thales
+- Modem: Cinterion EXS82-W Revision 01.000 from Thales or Quectel-BG96
 - Antenna: Wideband SMA B2 (700-2800 MHz) (Vivaldi antenna).
 - IoT device: RaspberryPi 4 (Linux raspberrypi 5.4.51-v7l+ #1333 SMP Mon Aug 10 16:51:40 BST 2020 armv7l GNU/Linux)
 

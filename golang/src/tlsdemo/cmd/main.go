@@ -33,6 +33,7 @@ type Flags_t struct {
 
 // This structure contains the different parameters used in this program
 type Config_t struct {
+    Port  string       ///< Port number
     Flags Flags_t      ///< Structure containing flags that can change the behaviour
 }
 

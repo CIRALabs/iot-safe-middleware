@@ -188,6 +188,8 @@ func GetIotSafeMiddlewareLocation( ) string {
 
     if LOG_LEVEL == TRACE_LEVEL {
         Prefix = fmt.Sprintf("%s --debug ", Prefix)
+    } else if LOG_LEVEL == DEBUG_LEVEL {
+        Prefix = fmt.Sprintf("%s --notice", Prefix)
     }
 
     // We add the port just in case
@@ -219,7 +221,7 @@ func runCommandGetOutput( CommandStr string ) ([]byte, error) {
     if err != nil {
         return nil, err
     }
-    if LOG_LEVEL <= TRACE_LEVEL {
+    if LOG_LEVEL <= DEBUG_LEVEL {
         fmt.Printf(string(OutputBytes))
     }
     return OutputBytes, nil
@@ -303,9 +305,11 @@ func initFlags( pConfig *Config_t ) error {
     flag.BoolVar( &pConfig.Flags.Verbosity.IsNotice,  "notice",  false, "Verbosity: Notice level" )
     flag.BoolVar( &pConfig.Flags.Verbosity.IsWarning, "warning", false, "Verbosity: Warning level" )
     flag.BoolVar( &pConfig.Flags.Verbosity.IsError,   "error",   false, "Verbosity: Error level" )
+    flag.StringVar( &pConfig.Port, "port", "/dev/ttyUSB0", "Serial port to connect to modem")
 
     flag.Parse()
 
+    PY_MW_USB_PORT = pConfig.Port
     return nil
 }
 

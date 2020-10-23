@@ -21,6 +21,7 @@
 #include <cstring>
 #include <time.h>
 #include "common.h"
+
 #define AT_DEBUG
 
 
@@ -88,14 +89,15 @@ bool ATInterface::readLine(char* data, unsigned long int* len) {
 	off = 0;
 	read = 0;
 
-    // Getting initial time
-    time_t timer_initial;
-    time(&timer_initial);
+	// Getting initial time
+	time_t timer_initial;
+	time(&timer_initial);
 
-    // Preparing variable for measuring time
-    time_t timer_current;
+	// Preparing variable for measuring time
+	time_t timer_current;
 	do {
 		if(!_serial->recv(&data[off], 1, &read)) {
+			_log(PY_LOG_LEVEL_ERROR, "Error reading on the serial port");
 			return false;
 		}
 		if(read) {
@@ -104,12 +106,12 @@ bool ATInterface::readLine(char* data, unsigned long int* len) {
 				break;
 			}
 		}
-        // We measure the current time and see if we must terminate
-        time(&timer_current);
-        if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
-            _log(PY_LOG_LEVEL_ERROR, "Timeout error");
-            return false;
-        }
+		// We measure the current time and see if we must terminate
+		time(&timer_current);
+		if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
+			_log(PY_LOG_LEVEL_ERROR, "Timeout error");
+			return false;
+		}
 	} while(1);
 
 	*len = off;
@@ -120,20 +122,20 @@ bool ATInterface::sendATCSIM(uint8_t* apdu, uint16_t apduLen, uint8_t* response,
 	char* buf;
 	uint16_t i;
 	unsigned long int off, len;
-    const char *prefix = "AT+CSIM=";
+	const char *prefix = "AT+CSIM=";
 
-    #ifdef AT_DEBUG
-    if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
-        printf("SND: %s%d,\"", prefix, apduLen * 2);
-	    for(i=0; i<apduLen; i++) {
-            printf("%02X", apdu[i]);
-        }
-        printf("\"\r\n");
-    }
+	#ifdef AT_DEBUG
+	if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
+		printf("SND: %s%d,\"", prefix, apduLen * 2);
+		for(i=0; i<apduLen; i++) {
+			printf("%02X", apdu[i]);
+		}
+		printf("\"\r\n");
+	}
 	#endif
 
 	off = 0;
-    uint16_t u16MaxBufLen = 537; // FIXME: Why that value?
+	uint16_t u16MaxBufLen = 537; // FIXME: Why that value?
 	buf = (char*) malloc(u16MaxBufLen * sizeof(char));
 
 	off += snprintf(&buf[off], u16MaxBufLen, "%s%d,\"", prefix, apduLen * 2);
@@ -145,32 +147,31 @@ bool ATInterface::sendATCSIM(uint8_t* apdu, uint16_t apduLen, uint8_t* response,
 	_serial->send(buf, off, &len);
 	memset(buf, 0, u16MaxBufLen);
 
-    // We set a timeout for the ATCSIM
-    time_t timer_initial;
-    time_t timer_current;
-    time(&timer_initial); // Get current time
+	// We set a timeout for the ATCSIM
+	time_t timer_initial;
+	time_t timer_current;
+	time(&timer_initial); // Get current time
 	do {
-        if (!readLine(buf, &len) ){
-            _log(PY_LOG_LEVEL_ERROR, "Error reading input from SIM card");
-            return false;
-        }
-
-        if(memcmp(buf, "ERROR\r\n", 7) == 0) {
-            _log(PY_LOG_LEVEL_ERROR, "Received error");
+		if (!readLine(buf, &len) ){
+			_log(PY_LOG_LEVEL_ERROR, "Error reading input from SIM card");
 			return false;
 		}
-        // Get the current time
-        time(&timer_current);
-        if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
-            _log(PY_LOG_LEVEL_ERROR, "Did not get response from the SIM card");
-            return false;
-        }
+		if(strstr(buf, "ERROR") != NULL) {
+			_log(PY_LOG_LEVEL_ERROR, "Received error");
+			return false;
+		}
+		// Get the current time
+		time(&timer_current);
+		if( difftime(timer_current, timer_initial) > TIMEOUT_SEC ) {
+			_log(PY_LOG_LEVEL_ERROR, "Did not get response from the SIM card");
+			return false;
+		}
 	} while((memcmp(buf, "+CSIM: ", 7) != 0));
 	#ifdef AT_DEBUG
-    if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
-        printf("Orig RCV: ");
-        printf("%s\n", buf);
-    }
+	if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
+		printf("Orig RCV: ");
+		printf("%s\n", buf);
+	}
 	#endif
 
 	off = 7;
@@ -195,13 +196,13 @@ bool ATInterface::sendATCSIM(uint8_t* apdu, uint16_t apduLen, uint8_t* response,
 	} while(memcmp(buf, "OK\r\n", 4) != 0);
 
 	#ifdef AT_DEBUG
-    if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
-        printf("RCV: ");
-	    for(i=0; i<*responseLen; i++) {
-		    printf("%02X", response[i]);
-        }
-        printf("\n");
-    }
+	if( PY_LOG_LEVEL <= PY_LOG_LEVEL_DEBUG ) {
+		printf("RCV: ");
+		for(i=0; i<*responseLen; i++) {
+			printf("%02X", response[i]);
+		}
+		printf("\n");
+	}
 	#endif
 
 	free(buf);
