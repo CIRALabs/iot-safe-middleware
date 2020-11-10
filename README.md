@@ -59,6 +59,7 @@ tar -zxvf cmake-3.18.2.tar.gz
 cd cmake-3.18.2
 # On a RaspberryPi, this next step takes quite a while...
 ./boostrap
+# This step will also take a while...
 make
 sudo make install
 
