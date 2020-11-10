@@ -59,22 +59,25 @@ tar -zxvf cmake-3.18.2.tar.gz
 cd cmake-3.18.2
 # On a RaspberryPi, this next step takes quite a while...
 ./boostrap
-# This step will also take a while...
+# This step will also take a while (an even longer while)...
 make
 sudo make install
 
 
 
-# For Golang, you need version 1.14 at least ("apt get install golang" on Ubuntu will install 1.13),
-# so go to https://golang.org/doc/install and download
-# the Go. Follow the instructions on the website afterwards. For instance, on Ubuntu, use this:
-wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
-# Or on a RaspberryPi, use this:
-# wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz
+# For Golang, you need version 1.14 at least ("apt get install golang" on Ubuntu will install 1.13)
 
-sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
-# or, on a RaspberryPi version
-# sudo tar -C /usr/local -xzf go1.15.2.linux-armv6l.tar.gz
+# On a RaspberryPi (ARM-based), you will need this package
+wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz
+# Or, for Ubuntu, use this:
+# wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
+
+// Put the go package files in the proper place:
+sudo tar -C /usr/local -xzf go1.15.2.linux-armv6l.tar.gz
+# Or, on Ubuntu, do this:
+# sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
+
+
 
 # Add the path to the Go executables to your path and save it in your .bashrc
 echo "export PATH=""$""PATH:/usr/local/go/bin" >> ~/.bashrc
