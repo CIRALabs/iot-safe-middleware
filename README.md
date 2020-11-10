@@ -40,7 +40,7 @@ tar -zxvf cmake-3.18.2.tar.gz
 cd cmake-3.18.2
 ./boostrap
 make
-make install
+sudo make install
 
 
 
