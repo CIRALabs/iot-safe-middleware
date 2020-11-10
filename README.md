@@ -70,6 +70,8 @@ wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
 # wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz
 
 sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
+# or, on a RaspberryPi version
+# sudo tar -C /usr/local -xzf go1.15.2.linux-armv6l.tar.gz
 
 # Add the path to the Go executables to your path and save it in your .bashrc
 echo "export PATH=""$""PATH:/usr/local/go/bin" >> ~/.bashrc
