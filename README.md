@@ -89,7 +89,7 @@ Once the prerequisites are installed, do the following:
 
 ```bash
 ./build.sh
-./setenv.sh
+. setenv.sh
 ./test.sh
 ./run.sh
 ```
