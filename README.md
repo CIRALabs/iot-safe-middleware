@@ -18,6 +18,7 @@ You will need a C++ compiler, Python 3 installed and Golang (at least version 1.
 
 ```bash
 sudo apt update
+sudo apt upgrade
 sudo apt install build-essential # Should cover C++ compiler
 
 # Installing openssl, getdns and other C++ dependencies
