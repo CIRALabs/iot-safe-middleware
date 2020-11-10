@@ -18,14 +18,6 @@ You will need a C++ compiler, Python 3 installed and Golang (at least version 1.
 sudo apt update
 sudo apt install build-essential # Should cover C++ compiler
 
-# Installing cmake (example for 3.18.2)
-wget https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar.gz
-tar -zxvf cmake-3.18.2.tar.gz
-cd cmake-3.18.2
-./boostrap
-make -j8
-make install
-
 # Installing openssl, getdns and other C++ dependencies
 sudo apt install libssl-dev
 sudo apt install libcpputest-dev
@@ -41,11 +33,27 @@ pip3 install numpy
 pip3 install pyOpenSSL
 pip3 install getdns
 
-# For Golang, you need version 1.14 at least, so go to https://golang.org/doc/install and download
-# the Go. Follow the instructions on the website afterwards. For instance:
-wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz # Ubuntu
-# or wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz for RaspberryPi
+
+# Installing cmake (example for 3.18.2)
+wget https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar.gz
+tar -zxvf cmake-3.18.2.tar.gz
+cd cmake-3.18.2
+./boostrap
+make
+sudo make install
+
+
+
+# For Golang, you need version 1.14 at least (apt get install golang will install 1.13),
+# so go to https://golang.org/doc/install and download
+# the Go. Follow the instructions on the website afterwards. For instance, on Ubuntu, use this:
+wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
+# Or on a RaspberryPi, use this:
+# wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz
+
 sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
+
+# Add the path to the Go executables to your path and save it in your .bashrc
 echo "export PATH=""$""PATH:/usr/local/go/bin" >> ~/.bashrc
 source ~/.bashrc
 ```
