@@ -18,14 +18,6 @@ You will need a C++ compiler, Python 3 installed and Golang (at least version 1.
 sudo apt update
 sudo apt install build-essential # Should cover C++ compiler
 
-# Installing cmake (example for 3.18.2)
-wget https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar.gz
-tar -zxvf cmake-3.18.2.tar.gz
-cd cmake-3.18.2
-./boostrap
-make -j8
-make install
-
 # Installing openssl, getdns and other C++ dependencies
 sudo apt install libssl-dev
 sudo apt install libcpputest-dev
@@ -40,6 +32,17 @@ pip3 install ecdsa
 pip3 install numpy
 pip3 install pyOpenSSL
 pip3 install getdns
+
+
+# Installing cmake (example for 3.18.2)
+wget https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar.gz
+tar -zxvf cmake-3.18.2.tar.gz
+cd cmake-3.18.2
+./boostrap
+make -j8
+make install
+
+
 
 # For Golang, you need version 1.14 at least, so go to https://golang.org/doc/install and download
 # the Go. Follow the instructions on the website afterwards. For instance:
