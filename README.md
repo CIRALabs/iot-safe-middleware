@@ -44,10 +44,13 @@ sudo make install
 
 
 
-# For Golang, you need version 1.14 at least, so go to https://golang.org/doc/install and download
-# the Go. Follow the instructions on the website afterwards. For instance:
-wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz # Ubuntu
-# or wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz for RaspberryPi
+# For Golang, you need version 1.14 at least (apt get install golang will install 1.13),
+# so go to https://golang.org/doc/install and download
+# the Go. Follow the instructions on the website afterwards. For instance, on Ubuntu, use this:
+wget https://golang.org/dl/go1.15.2.linux-amd64.tar.gz
+# Or on a RaspberryPi, use this:
+# wget https://golang.org/dl/go1.15.2.linux-armv6l.tar.gz
+
 sudo tar -C /usr/local -xzf go1.15.2.linux-amd64.tar.gz
 echo "export PATH=""$""PATH:/usr/local/go/bin" >> ~/.bashrc
 source ~/.bashrc
