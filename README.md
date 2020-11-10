@@ -24,10 +24,26 @@ sudo apt install build-essential # Should cover C++ compiler
 sudo apt install libssl-dev
 sudo apt install libcpputest-dev
 sudo apt install libgetdns-dev
+sudo apt install libatlas-base-dev # Used by the Python numby package
 
-# It might be better to go on the Python website for more info
-sudo apt install python3.8
-sudo apt install libatlas-base-dev # For using numpy
+# This may not be necessary as python3 may already be installed (it was on my RaspberryPi, as /usr/bin/python3.7)
+sudo apt install python3
+
+# Now, make python3 the default Python on my system...
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+# Note - if you've installed a different version of python3 (say, 3.8), you will 
+# need to adjust the /usr/bin/python3.7 arg in the line below to be correct for your system
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
+# Or possibly for Python3.8
+# sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 2
+
+# Confirm that we are now using Python3
+python --version
+# You should see 
+# Python 3.7.3
+
+# To switch between python versions, you can use this command (but you shouldn't need to):
+# sudo update-alternatives --config python
 
 # Installing all other Python3 dependencies (you might already have some of them)
 pip3 install ecdsa
