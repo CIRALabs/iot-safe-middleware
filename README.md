@@ -232,3 +232,8 @@ For these reasons, Golang was chosen to provide a proof of concept on how to est
   Afterwards, the signatures should work again.
 
 - Initially, code was written in Python to facilitate development. However, as discussed earlier, Golang was necessary to perform two-way authenticated TLS sessions. For future development, it would be interesting to migrate the Python code entirely to Golang and load the C++ library from there. This would simplify the interfacing, simplify the codebase and improve maintainability.
+
+- There have been some issues with the QUECTEL modem not working correctly without having a firmware update applied.  The update is located here: 
+https://github.com/TELUS-Emerging-IoT/Quectel-BG96-Firmware-Upgrade
+
+- Also, the Cinterion modem might also require a firmware update to function correctly.  Watch this space for the fix to be posted soonly.
