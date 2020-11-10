@@ -39,7 +39,7 @@ wget https://github.com/Kitware/CMake/releases/download/v3.18.2/cmake-3.18.2.tar
 tar -zxvf cmake-3.18.2.tar.gz
 cd cmake-3.18.2
 ./boostrap
-make -j8
+make
 make install
 
 
