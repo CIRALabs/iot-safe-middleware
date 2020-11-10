@@ -14,6 +14,8 @@ The main purpose of this project is to offer a proof of concept of how IoT devic
 
 You will need a C++ compiler, Python 3 installed and Golang (at least version 1.14). It is preferable to have a Linux environment. The code was solely tested on a Ubuntu 20.04 machine, but should work also on similar versions of Linux. This is an example of how these tools can be installed:
 
+
+
 ```bash
 sudo apt update
 sudo apt install build-essential # Should cover C++ compiler
@@ -58,6 +60,8 @@ echo "export PATH=""$""PATH:/usr/local/go/bin" >> ~/.bashrc
 source ~/.bashrc
 ```
 
+
+
 Tested with the following settings:
 
 ```bash
@@ -88,6 +92,12 @@ A few bash scripts were written to facilitate development. The `build.sh` script
 Once the prerequisites are installed, do the following:
 
 ```bash
+
+# Clone this repo.
+git clone https://github.com/CIRALabs/iot-safe-middleware
+cd iot-safe-middleware
+
+# Now, do the build of this repo.
 ./build.sh
 . setenv.sh
 ./test.sh
