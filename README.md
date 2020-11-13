@@ -60,11 +60,12 @@ cd cmake-3.18.2
 # On a RaspberryPi, this next step takes quite a while...
 ./boostrap
 # This step will also take a while (an even longer while)...
-# If you want, on a multi-core machine (like a Pi4), you can add a -j4 option to make to allow it
-# to do a parallel build, using all cores.  This will allow the build to run MUCH faster.
+# If you want, on a multi-core machine (like a Pi4), you can add a -j5 option to make to allow it
+# to do a parallel build, using all cores.  This will allow the build to run MUCH faster (but 
+# should keep the CPU at 100% during the build).
 make
 # or (on a RaspberryPi 4),
-# make -j4
+# make -j5
 sudo make install
 
 
