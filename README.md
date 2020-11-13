@@ -35,7 +35,7 @@ sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 # Note - if you've installed a different version of python3 (say, 3.8), you will 
 # need to adjust the /usr/bin/python3.7 arg in the line below to be correct for your system
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
-# Or possibly for Python3.8
+# Or possibly for Python3.8, like this:
 # sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 2
 
 # Confirm that we are now using Python3
@@ -60,7 +60,11 @@ cd cmake-3.18.2
 # On a RaspberryPi, this next step takes quite a while...
 ./boostrap
 # This step will also take a while (an even longer while)...
+# If you want, on a multi-core machine (like a Pi4), you can add a -j4 option to make to allow it
+# to do a parallel build, using all cores.  This will allow the build to run MUCH faster.
 make
+# or (on a RaspberryPi 4),
+# make -j4
 sudo make install
 
 
