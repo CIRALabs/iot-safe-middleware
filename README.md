@@ -128,6 +128,7 @@ cd iot-safe-middleware
 
 # Now, do the build of this repo.
 ./build.sh
+# NOTE: running setenv.sh could be done from your ~/.bashrc like this: "source /path/to/setenv.h"
 . setenv.sh
 ./test.sh
 ./run.sh
