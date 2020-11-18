@@ -44,8 +44,8 @@ signCmd = subparsers.add_parser('sign', help='Generates a signature on the SIM c
 signCmd.add_argument('--tbs', action='store', type=str, dest='tbs', required=True, help="Base64 encoded string of data to be signed")
 signCmd.add_argument('--raw', action='store_true', dest='raw', default=False, help="If true, performs a raw signature (no hash)")
 
-# getUrlAndPortCmd
-getUrlAndPort = subparsers.add_parser('getUrlAndPort', help='Retrieves the URL and the port of the server endpoint')
+# getFqdnAndPortCmd
+getFqdnAndPort = subparsers.add_parser('getFqdnAndPort', help='Retrieves the URL and the port of the server endpoint')
 
 # getAllInfo
 getAllInfo = subparsers.add_parser('getAllInfo', help='Retrieves all the information required for establishing a TLS session and validates the cryptographic material provided by the SIM card')
@@ -96,12 +96,12 @@ def getAllInfoCmd():
     aspCert           = utils.getCertificate( utils.ASP_CERTIFICATE_ID )
     endpointSignature = base64.b64encode( utils.readAsn1File( utils.SERVER_ENDPOINT_HASH_ID ) )
     aspCertSignature  = base64.b64encode( utils.readAsn1File( utils.SERVER_CERT_HASH_ID ) )
-    URL, Port         = utils.getUrlAndPort( IsSecure=True ) # Check 2
+    URL, Port         = utils.getFqdnAndPort( IsSecure=True ) # Check 2
 
     # Then we start making some verifications:
     # 1 - Validate that the rootCert is self-signed and that it signs the subCert and that
     #     the subCert signs the client cert.
-    # 2 - Validate that the signature on the endpoint (Already done in getUrlAndPort)
+    # 2 - Validate that the signature on the endpoint (Already done in getFqdnAndPort)
     # 3 - Validate that the ASP certificate was signed by the subCert
     # 4 - Ensure that the client certificate is contained in the DNS's database
 
@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
         # Once all the checks have been successfully completed, we return the information
         print("", flush=True)
-        print("URL: " + URL )
+        print("FQDN: " + URL )
         print("Port: " + str(Port))
         print("ClientCert: " + clientCert.decode("utf-8").replace("\n",""))
         print("AspCert: " + aspCert.decode("utf-8").replace("\n",""))
@@ -165,11 +165,11 @@ if __name__ == "__main__":
         print("", flush=True)
         print("PublicKey: " + utils.extractPubKeyFromCert(ClientCertificate).decode("utf-8").replace("\n",""))
 
-    elif args.command == "getUrlAndPort":
+    elif args.command == "getFqdnAndPort":
         utils.init()
-        URL, Port = utils.getUrlAndPort()
+        URL, Port = utils.getFqdnAndPort()
         print("", flush=True)
-        print("URL: " + URL)
+        print("FQDN: " + URL)
         print("Port: " + str(Port))
 
     elif args.command == "isProvisioned":
