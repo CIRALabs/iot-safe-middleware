@@ -30,13 +30,13 @@ sudo apt install libatlas-base-dev # Used by the Python numby package
 # This may not be necessary as python3 may already be installed (it was on my RaspberryPi, as /usr/bin/python3.7)
 sudo apt install python3
 
-# Now, make python3 the default Python on my system...
+# Now, make python 3.7 the default Python on my system, by giving python 3.7 priority over python 2.7
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-# Note - if you've installed a different version of python3 (say, 3.8), you will 
-# need to adjust the /usr/bin/python3.7 arg in the line below to be correct for your system
 sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7 2
-# Or possibly for Python3.8, like this:
+# Or, if you have Python3.8 you would set it as the default python, like this:
 # sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 2
+
+# See this link for more information: https://raspberry-valley.azurewebsites.net/Python-Default-Version/
 
 # Confirm that we are now using Python3
 python --version
