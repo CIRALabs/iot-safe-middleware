@@ -2,7 +2,7 @@
 
 SCRIPTDIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
-PORT="/dev/ttyUSB2"
+PORT="/dev/ttyUSB0"
 
 if [[ -z "${BUILD_DIR}" ]]; then
   source "${SCRIPTDIR}/setenv.sh"

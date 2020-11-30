@@ -34,7 +34,7 @@ var PY_MW_USB_PORT string
 const BUILD_DIR            = "BUILD_DIR" // Environment variable set by setenv.sh to reach Python functions
 const PY_RELATIVE_PATH     = "python/iot_mw.py"
 const PY_PUBKEY_LABEL      = "PublicKey"
-const PY_URL_LABEL         = "FQDN"
+const PY_URL_LABEL         = "URL"
 const PY_PORT_LABEL        = "Port"
 const PY_SIGNATURE_LABEL   = "Signature"
 const PY_CLIENT_CERT_LABEL = "ClientCert"

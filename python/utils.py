@@ -20,8 +20,8 @@
 #   - getRandom
 #   - readAsn1File
 #   - getCertificate
-#   - getFqdnAndPort
-#   - verifyFqdnAndPort
+#   - getUrlAndPort
+#   - verifyUrlAndPort
 #   - generateSignature
 #   - generateRawSignature
 #   - init
@@ -104,7 +104,7 @@ CPP_LOG_LEVEL = LOG_LEVEL_INFO
 
 # This part is used to configure the port that will be used to communicate with
 # the modem. You can modify this string based on your connection with the modem.
-MODEM_PORT = "/dev/ttyUSB2"
+MODEM_PORT = "/dev/ttyUSB0"
 
 # This is just for esthetic purposes and defines how many PEM characters wide a
 # certificate will be.
@@ -124,7 +124,7 @@ ASP_CERTIFICATE_ID         = 3
 # EPHEMERAL_PUBLIC_KEY_ID  = 5 -> Needs to be generated (not planning on implementing that yet)
 ROOT_CERTIFICATE_ID        = 6
 CIRA_SUB_CERTIFICATE_ID    = 7
-SERVER_ENDPOINT_ID         = 8  # Retrieved with the function "getFqdnAndPort"
+SERVER_ENDPOINT_ID         = 8  # Retrieved with the function "getUrlAndPort"
 SERVER_ENDPOINT_HASH_ID    = 9
 SERVER_CERT_HASH_ID        = 10
 
@@ -689,7 +689,7 @@ def getCertificate( ContainerId ):
 # @return URL  string
 # @return Port string
 #******************************************************************************#
-def getFqdnAndPort( IsSecure=True ):
+def getUrlAndPort( IsSecure=True ):
 
     # We prepare the values for retrieving the certificate
     uJsonStrArray  = ( ctypes.c_uint8 * MAX_SIZE_URL_PORT )()
@@ -714,19 +714,16 @@ def getFqdnAndPort( IsSecure=True ):
 
     # We check to see if we can verify the signature of the endpoint.
     if IsSecure:
-        if not verifyFqdnAndPort( jsonString ):
-            raise Exception("Invalid FQDN and port number")
+        if not verifyUrlAndPort( jsonString ):
+            raise Exception("Invalid URL and port number")
         elif CPP_LOG_LEVEL <= LOG_LEVEL_NOTICE:
             # Note that we could make this logging better at the Python level
-            log( LOG_LEVEL_NOTICE, "The signature on the FQDN and port number is valid")
+            log( LOG_LEVEL_NOTICE, "The signature on the URL and port number is valid")
 
     # We transform the string into a JSON object
     jsonObject = json.loads( jsonString )
     URL        = jsonObject[URL_LABEL]
     Port       = jsonObject[PORT_LABEL]
-
-    print("GOT FQDN: " + URL);
-    print("GOT PORT: " + str(Port));
 
     return URL, Port
 
@@ -739,7 +736,7 @@ def getFqdnAndPort( IsSecure=True ):
 # @return URL  string
 # @return Port string
 #******************************************************************************#
-def verifyFqdnAndPort( UrlAndPort ):
+def verifyUrlAndPort( UrlAndPort ):
 
     # We retrieve the signature and the certificate stored on the SIM card
     endpointSignature = base64.b64encode( readAsn1File( SERVER_ENDPOINT_HASH_ID ) )

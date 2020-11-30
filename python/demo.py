@@ -104,10 +104,10 @@ TestArray.append( TestCase( \
     utils.getRandom,        \
     16 ) )
 
-# We test the 'getFqdnAndPort' function
+# We test the 'getUrlAndPort' function
 TestArray.append( TestCase(     \
-    "Testing 'getFqdnAndPort'",  \
-    utils.getFqdnAndPort  ) )
+    "Testing 'getUrlAndPort'",  \
+    utils.getUrlAndPort  ) )
 
 # We test the 'generateSignature', 'getCertificate' and
 # 'verifySignature' functions at the same time. First, we

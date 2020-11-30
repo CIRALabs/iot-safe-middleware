@@ -276,7 +276,7 @@ func (priv *IoTPrivateKey_t) Sign(rand io.Reader, digest []byte, opts crypto.Sig
     // We decode the response from the command
     SignatureStr, err := ParseResponse( string(CommandOutput), PY_SIGNATURE_LABEL )
     if err != nil {
-        return nil, fmt.Errorf("Couldn't parse the FQDN: %s", err.Error())
+        return nil, fmt.Errorf("Couldn't parse the URL: %s", err.Error())
     }
 
     // The signature is returned as a base64 encoded string

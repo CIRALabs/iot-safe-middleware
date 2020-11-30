@@ -56,7 +56,6 @@ func hdlDemo( Parameters []string, pConfig *Config_t ) error {
     opts.SetClientID("IoT-Device")
     opts.SetTLSConfig( pTlsConfig )
     opts.SetProtocolVersion( uint(4) ) // MQTT 3.1.1
-    opts.SetAutoReconnect( true )
 
     // Attempting to connect to the server for a number of times before asserting
     // that the connection failed
