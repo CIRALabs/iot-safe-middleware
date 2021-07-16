@@ -27,19 +27,19 @@
 #   - init
 #******************************************************************************#
 
-import os
-import ecdsa
-import numpy as np
 import base64
-import json
-from OpenSSL import crypto
-from ecdsa.util import sigdecode_der
-from six import b
-from datetime import datetime
 import ctypes
 import hashlib
-import getdns
+import json
+import os
 import pprint
+from datetime import datetime
+
+import ecdsa
+import getdns
+import numpy as np
+from OpenSSL import crypto
+from ecdsa.util import sigdecode_der
 
 # The following paths might be updated in the future. Note that the buildDir
 # environment variable is set with setenv.sh and allows Python, C++ and Golang
@@ -60,7 +60,8 @@ common   = ctypes.CDLL(LIB_PATH_C4A_MIDDLEWARE)
 
 # This value is used to access the DNS. Additional entries can be provided, but
 # the format must be respected as it matches that of the "getdns" library
-DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'}]
+DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'},
+            {'address_type': 'IPv4', 'address_data': '149.112.122.10'}]
 
 # Through experimentation, we noticed that zeros were returned when asking
 # for more than 127 bytes of entropy through the getRandom function (i.e.,
@@ -185,7 +186,7 @@ def validateDNSRecord( certPem ):
 
     # We will only be validating certificates, so I believe it is ok to hard code
     # this parameter here
-    requestType = getdns.RRTYPE_CERT
+    requestType = getdns.RRTYPE_TLSA
 
     # We define a set of extensions
     extensions = {
@@ -249,8 +250,8 @@ def validateDNSRecord( certPem ):
 # @param DnssecAnswer   Answer of the DNSSEC containing the hash of the certificate
 # @return Decoded hash object
 #******************************************************************************#
-def getCertDigestFromServer( DnssecAnswer ):
-    return DnssecAnswer['rdata']['certificate_or_crl'].tobytes()
+def getCertDigestFromServer(DnssecAnswer):
+    return DnssecAnswer['rdata']['certificate_association_data'].tobytes()
 
 #******************************************************************************#
 #  \brief Gets the digest of a certificate's content
@@ -639,7 +640,7 @@ def readAsn1File( ContainerId ):
     ReturnArray = []
     for i in range( min(MAX_FILE_SIZE, uContentLen.contents.value) ):
         ReturnArray.append( uContentArray[i] )
- 
+
     # We convert the array of integers into bytes.
     byteContent = np.array( ReturnArray, dtype=np.uint8 ).tobytes()
 
