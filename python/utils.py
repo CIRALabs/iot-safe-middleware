@@ -221,7 +221,7 @@ def validateDNSRecord(requestType, certPem):
             # obtained from the DNSSEC server
             if getdns.RRTYPE_CERT:
                 digestOfCertServer = getCertDigestFromServerCert(item)
-            elif getdns.RRTYPE_CERT:
+            elif getdns.RRTYPE_TLSA:
                 digestOfCertServer = getCertDigestFromServerTlsa(item)
             else:
                 raise Exception("Unsupported RRTYPE can not decode digest from record")
