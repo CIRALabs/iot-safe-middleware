@@ -32,7 +32,7 @@ group.add_argument('--info',    action='store_true', dest='info')
 group.add_argument('--notice',  action='store_true', dest='notice')
 group.add_argument('--warning', action='store_true', dest='warning')
 group.add_argument('--error',   action='store_true', dest='error')
-group.add_argument('--cert',   action='store_true', dest='cert')
+group.add_argument('--tlsa',   action='store_true', dest='tlsa')
 
 
 # The following are the different commands allowed.
@@ -77,7 +77,7 @@ elif args.error:
 # We set the port
 utils.MODEM_PORT = args.port
 
-requestType = getdns.RRTYPE_CERT if args.cert else getdns.RRTYPE_TLSA
+requestType = getdns.RRTYPE_TLSA if args.tlsa else getdns.RRTYPE_CERT
 
 #******************************************************************************#
 #  \brief Retrieves and validates all the necessary information from the SIM
