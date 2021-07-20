@@ -62,7 +62,8 @@ common   = ctypes.CDLL(LIB_PATH_C4A_MIDDLEWARE)
 # the format must be respected as it matches that of the "getdns" library
 DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'},
             {'address_type': 'IPv4', 'address_data': '149.112.122.10'}]
-requestType = getdns.RRTYPE_TLSA
+
+
 # Through experimentation, we noticed that zeros were returned when asking
 # for more than 127 bytes of entropy through the getRandom function (i.e.,
 # asking for 128 bytes or more). To avoid unwanted and potentially dangerous
@@ -179,7 +180,7 @@ def log( Level, Input ):
 # @param CertificatePem PEM formatted certificate to check
 # @return True if the certificate chain is valid and raises an exception otherwise
 #******************************************************************************#
-def validateDNSRecord( certPem ):
+def validateDNSRecord(requestType, certPem):
 
     # We assume that the common name of the certificate is the query name
     queryName = getCNFromCert( certPem )
@@ -218,7 +219,11 @@ def validateDNSRecord( certPem ):
 
             # We now extract and properly decode the digest of the certificate
             # obtained from the DNSSEC server
-            digestOfCertServer = getCertDigestFromServer( item )
+            if getdns.RRTYPE_CERT:
+                digestOfCertServer = getCertDigestFromServerCert(item)
+            else:
+                digestOfCertServer = getCertDigestFromServerTlsa(item)
+
 
             # Both values should now be equal. Otherwise, we express both as a
             # hex sequence to help debugging.
@@ -246,7 +251,11 @@ def validateDNSRecord( certPem ):
 # @param DnssecAnswer   Answer of the DNSSEC containing the hash of the certificate
 # @return Decoded hash object
 #******************************************************************************#
-def getCertDigestFromServer(DnssecAnswer):
+def getCertDigestFromServerCert(DnssecAnswer):
+    return DnssecAnswer['rdata']['certificate_or_crl'].tobytes()
+
+
+def getCertDigestFromServerTlsa(DnssecAnswer):
     return DnssecAnswer['rdata']['certificate_association_data'].tobytes()
 
 #******************************************************************************#
