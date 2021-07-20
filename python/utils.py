@@ -62,7 +62,7 @@ common   = ctypes.CDLL(LIB_PATH_C4A_MIDDLEWARE)
 # the format must be respected as it matches that of the "getdns" library
 DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'},
             {'address_type': 'IPv4', 'address_data': '149.112.122.10'}]
-
+requestType = getdns.RRTYPE_TLSA
 # Through experimentation, we noticed that zeros were returned when asking
 # for more than 127 bytes of entropy through the getRandom function (i.e.,
 # asking for 128 bytes or more). To avoid unwanted and potentially dangerous
@@ -183,10 +183,6 @@ def validateDNSRecord( certPem ):
 
     # We assume that the common name of the certificate is the query name
     queryName = getCNFromCert( certPem )
-
-    # We will only be validating certificates, so I believe it is ok to hard code
-    # this parameter here
-    requestType = getdns.RRTYPE_TLSA
 
     # We define a set of extensions
     extensions = {

@@ -7,12 +7,10 @@
 #              functionalities related to the IoT device middleware
 #******************************************************************************#
 
-import sys
-import os
-import base64
 import argparse
+import base64
+
 import utils
-from shutil import move
 
 #******************************************************************************#
 # Parsing arguments
@@ -119,7 +117,10 @@ def getAllInfoCmd():
 
     # Check 4
     if not utils.validateDNSRecord( clientCert ):
-        raise Exception("Client certificate record wasn't found in the DNS server")
+        raise Exception(f"Client {utils.requestType} record wasn't found in the DNS server")
+    else:
+        utils.log(utils.LOG_LEVEL_NOTICE,
+                  f"The {utils.requestType} for {utils.getCNFromCert(clientCert)} is matching the certificate")
 
     return URL, Port, aspCert, clientCert
 
