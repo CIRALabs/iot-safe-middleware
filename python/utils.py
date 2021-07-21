@@ -27,19 +27,19 @@
 #   - init
 #******************************************************************************#
 
-import os
-import ecdsa
-import numpy as np
 import base64
-import json
-from OpenSSL import crypto
-from ecdsa.util import sigdecode_der
-from six import b
-from datetime import datetime
 import ctypes
 import hashlib
-import getdns
+import json
+import os
 import pprint
+from datetime import datetime
+
+import ecdsa
+import getdns
+import numpy as np
+from OpenSSL import crypto
+from ecdsa.util import sigdecode_der
 
 # The following paths might be updated in the future. Note that the buildDir
 # environment variable is set with setenv.sh and allows Python, C++ and Golang
@@ -60,7 +60,9 @@ common   = ctypes.CDLL(LIB_PATH_C4A_MIDDLEWARE)
 
 # This value is used to access the DNS. Additional entries can be provided, but
 # the format must be respected as it matches that of the "getdns" library
-DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'}]
+DNS_ADDR = [{'address_type': 'IPv4', 'address_data': '149.112.121.10'},
+            {'address_type': 'IPv4', 'address_data': '149.112.122.10'}]
+
 
 # Through experimentation, we noticed that zeros were returned when asking
 # for more than 127 bytes of entropy through the getRandom function (i.e.,
@@ -178,14 +180,10 @@ def log( Level, Input ):
 # @param CertificatePem PEM formatted certificate to check
 # @return True if the certificate chain is valid and raises an exception otherwise
 #******************************************************************************#
-def validateDNSRecord( certPem ):
+def validateDNSRecord(requestType, certPem):
 
     # We assume that the common name of the certificate is the query name
     queryName = getCNFromCert( certPem )
-
-    # We will only be validating certificates, so I believe it is ok to hard code
-    # this parameter here
-    requestType = getdns.RRTYPE_CERT
 
     # We define a set of extensions
     extensions = {
@@ -221,7 +219,13 @@ def validateDNSRecord( certPem ):
 
             # We now extract and properly decode the digest of the certificate
             # obtained from the DNSSEC server
-            digestOfCertServer = getCertDigestFromServer( item )
+            if requestType == getdns.RRTYPE_CERT:
+                digestOfCertServer = getCertDigestFromServerCert(item)
+            elif requestType == getdns.RRTYPE_TLSA:
+                digestOfCertServer = getCertDigestFromServerTlsa(item)
+            else:
+                raise Exception("Unsupported RRTYPE can not decode digest from record")
+
 
             # Both values should now be equal. Otherwise, we express both as a
             # hex sequence to help debugging.
@@ -249,8 +253,12 @@ def validateDNSRecord( certPem ):
 # @param DnssecAnswer   Answer of the DNSSEC containing the hash of the certificate
 # @return Decoded hash object
 #******************************************************************************#
-def getCertDigestFromServer( DnssecAnswer ):
+def getCertDigestFromServerCert(DnssecAnswer):
     return DnssecAnswer['rdata']['certificate_or_crl'].tobytes()
+
+
+def getCertDigestFromServerTlsa(DnssecAnswer):
+    return DnssecAnswer['rdata']['certificate_association_data'].tobytes()
 
 #******************************************************************************#
 #  \brief Gets the digest of a certificate's content
@@ -639,7 +647,7 @@ def readAsn1File( ContainerId ):
     ReturnArray = []
     for i in range( min(MAX_FILE_SIZE, uContentLen.contents.value) ):
         ReturnArray.append( uContentArray[i] )
- 
+
     # We convert the array of integers into bytes.
     byteContent = np.array( ReturnArray, dtype=np.uint8 ).tobytes()
 
